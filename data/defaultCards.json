@@ -1,0 +1,122 @@
+[
+    {
+    "id": "1",
+    "word": "你好",
+    "pinyin": "nǐ hǎo",
+    "meaning": "Xin chào"
+    },
+    {
+    "id": "2",
+    "word": "谢谢",
+    "pinyin": "xiè xie",
+    "meaning": "Cảm ơn"
+    },
+    {
+    "id": "3",
+    "word": "再见",
+    "pinyin": "zài jiàn",
+    "meaning": "Tạm biệt"
+    },
+    {
+    "id": "4",
+    "word": "对不起",
+    "pinyin": "duì bu qǐ",
+    "meaning": "Xin lỗi"
+    },
+    {
+    "id": "5",
+    "word": "请",
+    "pinyin": "qǐng",
+    "meaning": "Làm ơn"
+    },
+    {
+    "id": "6",
+    "word": "是",
+    "pinyin": "shì",
+    "meaning": "Là"
+    },
+    {
+    "id": "7",
+    "word": "不是",
+    "pinyin": "bú shì",
+    "meaning": "Không phải"
+    },
+    {
+    "id": "8",
+    "word": "中国",
+    "pinyin": "Zhōngguó",
+    "meaning": "Trung Quốc"
+    },
+    {
+    "id": "9",
+    "word": "老师",
+    "pinyin": "lǎoshī",
+    "meaning": "Giáo viên"
+    },
+    {
+    "id": "10",
+    "word": "学生",
+    "pinyin": "xuéshēng",
+    "meaning": "Học sinh"
+    },
+    {
+    "id": "11",
+    "word": "书",
+    "pinyin": "shū",
+    "meaning": "Sách"
+    },
+    {
+    "id": "12",
+    "word": "水",
+    "pinyin": "shuǐ",
+    "meaning": "Nước"
+    },
+    {
+    "id": "13",
+    "word": "饭",
+    "pinyin": "fàn",
+    "meaning": "Cơm"
+    },
+    {
+    "id": "14",
+    "word": "茶",
+    "pinyin": "chá",
+    "meaning": "Trà"
+    },
+    {
+    "id": "15",
+    "word": "水果",
+        "pinyin": "shuǐguǒ",
+        "meaning": "Trái cây"
+    },
+    {
+    "id": "16",
+    "word": "面包",
+    "pinyin": "miànbāo",
+    "meaning": "Bánh mì"
+    },
+    {
+    "id": "17",
+    "word": "牛奶",
+    "pinyin": "niúnǎi",
+    "meaning": "Sữa"
+    },
+    {
+    "id": "18",
+    "word": "肉",
+    "pinyin": "ròu",
+    "meaning": "Thịt"
+    },
+    {
+    "id": "19",
+    "word": "鱼",
+    "pinyin": "yú",
+    "meaning": "Cá"
+    },
+    {
+    "id": "20",
+    "word": "鸡蛋",   
+        "pinyin": "jīdàn",
+        "meaning": "Trứng"
+    }
+]
