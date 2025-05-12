@@ -5,6 +5,7 @@ import {
   TextInput,
   FlatList,
   StyleSheet,
+  SafeAreaView,
   TouchableOpacity,
   Alert,
 } from 'react-native';
@@ -20,7 +21,7 @@ const LibraryScreen = () => {
   const [vocabularyList, setVocabularyList] = useState([]);
 
   useEffect(() => {
-    // Load dữ liệu khi component mount
+    console.log('Attempting to load vocabulary...');
     loadVocabulary();
   }, []);
 
@@ -106,7 +107,7 @@ const LibraryScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>📖 Thư viện từ vựng</Text>
 
       <TextInput
@@ -124,7 +125,7 @@ const LibraryScreen = () => {
           <Text style={styles.noResult}>Không tìm thấy từ phù hợp.</Text>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
