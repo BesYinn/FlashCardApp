@@ -9,6 +9,7 @@ import GameScreen from './screens/GameScreen';
 import LibraryScreen from './screens/LibraryScreen';
 import CreateCardScreen from './screens/CreateCardScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 
 const Stack = createStackNavigator();
 
@@ -20,7 +21,7 @@ const App = () => {
         <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false  }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ headerShown: false }} />
         {/* Màn hình chính sau khi đăng nhập thành công */}
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Trang chủ' }} />
 

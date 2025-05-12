@@ -6,90 +6,132 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const CreateCardScreen = () => {
-  const [word, setWord] = useState('');
-  const [pinyin, setPinyin] = useState('');
-  const [meaning, setMeaning] = useState('');
+  const navigation = useNavigation();
+  const [term, setTerm] = useState('');
+  const [definition, setDefinition] = useState('');
 
-  const handleCreateCard = () => {
-    if (!word || !pinyin || !meaning) {
+  const handleSaveCard = () => {
+    if (!term || !definition) {
       Alert.alert('⚠️ Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
       return;
     }
 
-    // TODO: Gửi dữ liệu lên server hoặc lưu local storage
-    Alert.alert('✅ Thành công', 'Flashcard đã được tạo!');
-    setWord('');
-    setPinyin('');
-    setMeaning('');
+    // Tạo flashcard mới
+    const newCard = {
+      id: Date.now().toString(),
+      term,
+      definition,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Lưu vào storage (sẽ thêm sau)
+    Alert.alert(
+      '✅ Thành công',
+      'Đã thêm flashcard vào thư viện!',
+      [
+        {
+          text: 'Tạo thêm',
+          onPress: () => {
+            setTerm('');
+            setDefinition('');
+          },
+        },
+        {
+          text: 'Xem thư viện',
+          onPress: () => navigation.navigate('Library'),
+        },
+      ]
+    );
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>➕ Tạo flashcard mới</Text>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>✏️ Tạo Flashcard</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nhập từ tiếng Trung"
-        value={word}
-        onChangeText={setWord}
-      />
+      <View style={styles.card}>
+        <Text style={styles.label}>Thuật ngữ:</Text>
+        <TextInput
+          style={styles.input}
+          value={term}
+          onChangeText={setTerm}
+          placeholder="Nhập thuật ngữ cần học"
+          multiline
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nhập phiên âm (pinyin)"
-        value={pinyin}
-        onChangeText={setPinyin}
-      />
+        <Text style={styles.label}>Định nghĩa:</Text>
+        <TextInput
+          style={[styles.input, styles.definitionInput]}
+          value={definition}
+          onChangeText={setDefinition}
+          placeholder="Nhập định nghĩa/giải thích"
+          multiline
+        />
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nhập nghĩa tiếng Việt"
-        value={meaning}
-        onChangeText={setMeaning}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleCreateCard}>
-        <Text style={styles.buttonText}>Tạo thẻ</Text>
+      <TouchableOpacity style={styles.button} onPress={handleSaveCard}>
+        <Text style={styles.buttonText}>Lưu Flashcard</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eef6ff',
-    paddingTop: 60,
-    paddingHorizontal: 24,
+    backgroundColor: '#e8f0fe',
+    padding: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
     textAlign: 'center',
   },
-  input: {
+  card: {
     backgroundColor: '#fff',
-    padding: 14,
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  label: {
     fontSize: 16,
-    borderRadius: 10,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#4a90e2',
+  },
+  input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 16,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 20,
+    minHeight: 50,
+  },
+  definitionInput: {
+    minHeight: 100,
+    textAlignVertical: 'top',
   },
   button: {
-    backgroundColor: '#5b9dfc',
-    padding: 14,
+    backgroundColor: '#4a90e2',
+    padding: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
