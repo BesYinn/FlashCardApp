@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-} from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 
 const LearnScreen = () => {
+  // 1. Đặt tất cả hooks ở đầu component
   const route = useRoute();
-  // Thêm default values cho params
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const flipAnim = new Animated.Value(0);
+
+  // 2. Lấy params từ route
   const { words = [], categoryName = 'Từ vựng' } = route.params || {};
 
-  // Kiểm tra nếu không có từ nào
+  // 3. Kiểm tra điều kiện sau khi đã khai báo hooks
   if (words.length === 0) {
     return (
       <View style={styles.container}>
@@ -24,10 +23,7 @@ const LearnScreen = () => {
     );
   }
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const flipAnim = new Animated.Value(0);
-
+  // 4. Các hàm xử lý
   const handleFlip = () => {
     const toValue = isFlipped ? 0 : 1;
     Animated.spring(flipAnim, {
@@ -77,6 +73,7 @@ const LearnScreen = () => {
     }
   };
 
+  // 5. Component render
   return (
     <View style={styles.container}>
       <Text style={styles.categoryTitle}>{categoryName}</Text>
