@@ -5,6 +5,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const validator = require('validator');
+const rateLimit = require('express-rate-limit');
+const winston = require('winston');
+const helmet = require('helmet');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,7 +18,7 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = 'your_jwt_secret_key_here_replace_in_production';
 
 // Chuỗi kết nối với mật khẩu đã được mã hóa
-const password = encodeURIComponent('Ad@123456');
+const password = encodeURIComponent('Admin123456');
 const uri = `mongodb+srv://admin:${password}@cluster0.xljpiwa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 console.log('Đang kết nối đến MongoDB...');
@@ -88,9 +93,38 @@ const User = mongoose.model('User', userSchema);
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(helmet()); // Thêm các security headers
+app.use(helmet.noSniff()); // Ngăn MIME sniffing
+app.use(helmet.xssFilter()); // Bảo vệ XSS
+
+// Rate limiting middleware
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 phút
+    max: 100, // Giới hạn 100 request từ mỗi IP
+    message: 'Too many requests from this IP, please try again later'
+});
+
+// Áp dụng rate limiting cho route auth
+app.use('/auth', limiter);
+
+// Logger setup
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'combined.log' })
+    ]
+});
 
 // Error handling middleware
 const errorHandler = (err, req, res, next) => {
+  logger.error({
+    message: err.message,
+    stack: err.stack,
+    timestamp: new Date().toISOString()
+  });
+  
   console.error(err.stack);
   
   // Handle specific error types
@@ -117,6 +151,8 @@ const errorHandler = (err, req, res, next) => {
 };
 
 /* ======== Authentication Routes ======== */
+
+const refreshTokens = new Set();
 
 // Register new user
 app.post('/auth/register', async (req, res, next) => {
@@ -198,10 +234,24 @@ app.post('/auth/login', async (req, res, next) => {
       { expiresIn: '24h' }
     );
 
+    // Generate refresh token
+    const refreshToken = jwt.sign(
+      { 
+        id: user._id, 
+        email: user.email,
+        role: user.role 
+      }, 
+      JWT_SECRET, 
+      { expiresIn: '7d' }
+    );
+
+    refreshTokens.add(refreshToken);
+
     // Respond with token and user info
     res.json({
       message: 'Login successful',
       token,
+      refreshToken,
       user: {
         id: user._id,
         fullName: user.fullName,
@@ -212,6 +262,28 @@ app.post('/auth/login', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+// Refresh token route
+app.post('/auth/refresh-token', async (req, res) => {
+    const { refreshToken } = req.body;
+    
+    if (!refreshToken || !refreshTokens.has(refreshToken)) {
+        return res.status(403).json({ message: 'Invalid refresh token' });
+    }
+
+    try {
+        const user = jwt.verify(refreshToken, JWT_SECRET);
+        const accessToken = jwt.sign(
+            { id: user.id, email: user.email, role: user.role },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+        
+        res.json({ accessToken });
+    } catch (error) {
+        res.status(403).json({ message: 'Invalid refresh token' });
+    }
 });
 
 // Middleware to verify JWT token
@@ -239,6 +311,35 @@ app.get('/protected', authenticateToken, (req, res) => {
     user: req.user 
   });
 });
+
+// Validation middleware
+const validateRequest = (schema) => {
+    return (req, res, next) => {
+        const { error } = schema.validate(req.body);
+        if (error) {
+            return res.status(400).json({
+                message: 'Validation Error',
+                errors: error.details.map(detail => detail.message)
+            });
+        }
+        next();
+    };
+};
+
+// Swagger setup
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: 'Flash Card API',
+            version: '1.0.0',
+            description: 'Flash Card Application API'
+        }
+    },
+    apis: ['./ServerDB.js']
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Apply error handling middleware
 app.use(errorHandler);
