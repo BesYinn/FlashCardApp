@@ -8,8 +8,6 @@ const validator = require('validator');
 const rateLimit = require('express-rate-limit');
 const winston = require('winston');
 const helmet = require('helmet');
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -325,21 +323,6 @@ const validateRequest = (schema) => {
         next();
     };
 };
-
-// Swagger setup
-const swaggerOptions = {
-    swaggerDefinition: {
-        info: {
-            title: 'Flash Card API',
-            version: '1.0.0',
-            description: 'Flash Card Application API'
-        }
-    },
-    apis: ['./ServerDB.js']
-};
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Apply error handling middleware
 app.use(errorHandler);
