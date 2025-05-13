@@ -5,77 +5,209 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ScrollView,
+  Image,
+  Alert,
+  Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreateCardScreen = () => {
   const navigation = useNavigation();
-  const [term, setTerm] = useState('');
-  const [definition, setDefinition] = useState('');
+  
+  // State cho form input
+  const [word, setWord] = useState('');
+  const [pinyin, setPinyin] = useState('');
+  const [meaning, setMeaning] = useState('');
+  const [example, setExample] = useState('');
+  const [exampleMeaning, setExampleMeaning] = useState('');
+  const [image, setImage] = useState(null);
+  
+  // State cho dropdown
+  const [openCategory, setOpenCategory] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [openLevel, setOpenLevel] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState(null);
 
-  const handleSaveCard = () => {
-    if (!term || !definition) {
-      Alert.alert('⚠️ Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
+  // Categories và levels cho dropdown
+  const [categories] = useState([
+    { label: 'Chào hỏi', value: 'greeting' },
+    { label: 'Số đếm', value: 'numbers' },
+    { label: 'Màu sắc', value: 'colors' },
+    { label: 'Thời gian', value: 'time' },
+  ]);
+
+  const [levels] = useState([
+    { label: 'Cơ bản', value: 'basic' },
+    { label: 'Trung bình', value: 'intermediate' },
+    { label: 'Nâng cao', value: 'advanced' },
+  ]);
+
+  // Xử lý chọn ảnh
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert('Lỗi', 'Cần cấp quyền truy cập thư viện ảnh');
       return;
     }
 
-    // Tạo flashcard mới
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  // Xử lý lưu flashcard
+  const handleSave = () => {
+    if (!word || !pinyin || !meaning) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin bắt buộc');
+      return;
+    }
+
     const newCard = {
-      id: Date.now().toString(),
-      term,
-      definition,
+      word,
+      pinyin,
+      meaning,
+      example,
+      exampleMeaning,
+      image,
+      category: selectedCategory,
+      level: selectedLevel,
       createdAt: new Date().toISOString(),
     };
 
-    // Lưu vào storage (sẽ thêm sau)
-    Alert.alert(
-      '✅ Thành công',
-      'Đã thêm flashcard vào thư viện!',
-      [
-        {
-          text: 'Tạo thêm',
-          onPress: () => {
-            setTerm('');
-            setDefinition('');
-          },
-        },
-        {
-          text: 'Xem thư viện',
-          onPress: () => navigation.navigate('Library'),
-        },
-      ]
-    );
+    // TODO: Lưu vào storage
+    console.log('Saving card:', newCard);
+    Alert.alert('Thành công', 'Đã lưu flashcard');
+    navigation.goBack();
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>✏️ Tạo Flashcard</Text>
-
-      <View style={styles.card}>
-        <Text style={styles.label}>Thuật ngữ:</Text>
-        <TextInput
-          style={styles.input}
-          value={term}
-          onChangeText={setTerm}
-          placeholder="Nhập thuật ngữ cần học"
-          multiline
-        />
-
-        <Text style={styles.label}>Định nghĩa:</Text>
-        <TextInput
-          style={[styles.input, styles.definitionInput]}
-          value={definition}
-          onChangeText={setDefinition}
-          placeholder="Nhập định nghĩa/giải thích"
-          multiline
-        />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Tạo Flashcard mới</Text>
+        <TouchableOpacity onPress={handleSave}>
+          <Text style={styles.saveButton}>Lưu</Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleSaveCard}>
-        <Text style={styles.buttonText}>Lưu Flashcard</Text>
-      </TouchableOpacity>
+      <View style={styles.form}>
+        {/* Từ vựng */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Từ vựng (tiếng Trung) *</Text>
+          <TextInput
+            style={styles.input}
+            value={word}
+            onChangeText={setWord}
+            placeholder="Nhập từ vựng"
+          />
+        </View>
+
+        {/* Phiên âm */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Phiên âm (pinyin) *</Text>
+          <TextInput
+            style={styles.input}
+            value={pinyin}
+            onChangeText={setPinyin}
+            placeholder="Nhập phiên âm"
+          />
+        </View>
+
+        {/* Nghĩa */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Nghĩa (tiếng Việt) *</Text>
+          <TextInput
+            style={styles.input}
+            value={meaning}
+            onChangeText={setMeaning}
+            placeholder="Nhập nghĩa"
+          />
+        </View>
+
+        {/* Ví dụ */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Câu ví dụ (tiếng Trung)</Text>
+          <TextInput
+            style={styles.input}
+            value={example}
+            onChangeText={setExample}
+            placeholder="Nhập câu ví dụ"
+          />
+        </View>
+
+        {/* Nghĩa ví dụ */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Nghĩa câu ví dụ</Text>
+          <TextInput
+            style={styles.input}
+            value={exampleMeaning}
+            onChangeText={setExampleMeaning}
+            placeholder="Nhập nghĩa câu ví dụ"
+          />
+        </View>
+
+        {/* Chọn chủ đề */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Chủ đề</Text>
+          <DropDownPicker
+            open={openCategory}
+            value={selectedCategory}
+            items={categories}
+            setOpen={setOpenCategory}
+            setValue={setSelectedCategory}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+          />
+        </View>
+
+        {/* Chọn cấp độ */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Cấp độ</Text>
+          <DropDownPicker
+            open={openLevel}
+            value={selectedLevel}
+            items={levels}
+            setOpen={setOpenLevel}
+            setValue={setSelectedLevel}
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+          />
+        </View>
+
+        {/* Thêm hình ảnh */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Hình ảnh minh họa</Text>
+          <TouchableOpacity 
+            style={styles.imageButton} 
+            onPress={pickImage}
+          >
+            {image ? (
+              <Image source={{ uri: image }} style={styles.selectedImage} />
+            ) : (
+              <View style={styles.imagePlaceholder}>
+                <Ionicons name="image-outline" size={24} color="#666" />
+                <Text style={styles.imagePlaceholderText}>
+                  Chọn hình ảnh
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
     </ScrollView>
   );
 };
@@ -83,55 +215,75 @@ const CreateCardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e8f0fe',
-    padding: 20,
+    backgroundColor: '#f5f9ff',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    textAlign: 'center',
-  },
-  card: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
     backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  saveButton: {
+    color: '#4a90e2',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  form: {
+    padding: 16,
+  },
+  inputGroup: {
     marginBottom: 20,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
     marginBottom: 8,
-    color: '#4a90e2',
+    color: '#333',
   },
   input: {
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    marginBottom: 20,
-    minHeight: 50,
   },
-  definitionInput: {
-    minHeight: 100,
-    textAlignVertical: 'top',
+  dropdown: {
+    backgroundColor: '#fff',
+    borderColor: '#ddd',
+    borderRadius: 8,
   },
-  button: {
-    backgroundColor: '#4a90e2',
-    padding: 15,
-    borderRadius: 10,
+  dropdownContainer: {
+    backgroundColor: '#fff',
+    borderColor: '#ddd',
+    borderRadius: 8,
+  },
+  imageButton: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  selectedImage: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+  },
+  imagePlaceholder: {
+    height: 120,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+  imagePlaceholderText: {
+    marginTop: 8,
+    color: '#666',
   },
 });
 

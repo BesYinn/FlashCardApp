@@ -23,7 +23,7 @@ const LoginScreen = () => {
     // Giả lập xác thực thành công
     if (email === 'test@example.com' && password === '123456') {
       Alert.alert('✅ Đăng nhập thành công!');
-      navigation.replace('Home');
+      navigation.replace('MainApp'); // Thay đổi từ 'Home' thành 'MainApp'
     } else {
       Alert.alert('❌ Đăng nhập thất bại', 'Sai email hoặc mật khẩu.');
     }

@@ -1,11 +1,18 @@
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
-// ...existing code...
+import RegisterScreen from '../screens/RegisterScreen';
+import TabNavigator from './TabNavigator';
+import CreateCardScreen from '../screens/CreateCardScreen';
+import StudyScreen from '../screens/StudyScreen';
+import GamesScreen from '../screens/GamesScreen';
+import QuizGame from '../screens/games/QuizGame';
+import MatchingGame from '../screens/games/MatchingGame';
 
 const Stack = createStackNavigator();
 
-function AppNavigator() {
+const AppNavigator = () => {
   return (
     <Stack.Navigator
       initialRouteName="Splash"
@@ -15,9 +22,15 @@ function AppNavigator() {
     >
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
-      {/* ...other screens... */}
+      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="MainApp" component={TabNavigator} />
+      <Stack.Screen name="CreateCard" component={CreateCardScreen} />
+      <Stack.Screen name="Study" component={StudyScreen} />
+      <Stack.Screen name="Games" component={GamesScreen} />
+      <Stack.Screen name="QuizGame" component={QuizGame} />
+      <Stack.Screen name="MatchingGame" component={MatchingGame} />
     </Stack.Navigator>
   );
-}
+};
 
 export default AppNavigator;
