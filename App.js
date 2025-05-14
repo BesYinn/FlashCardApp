@@ -1,11 +1,18 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { AuthProvider } from './context/AuthContext';
 import AppNavigator from './navigation/AppNavigator';
+import axios from 'axios';
+
+// Set base URL for axios with your computer's IP address
+axios.defaults.baseURL = 'http://192.168.175.118:5000';
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <AppNavigator />
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }

@@ -9,50 +9,44 @@ import {
   ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
-const RegisterScreen = () => {
-  const navigation = useNavigation();
+const RegisterScreen = ({ navigation }) => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRegister = async () => {
-    if (!fullName || !email || !password || !confirmPassword) {
-      Alert.alert("⚠️ Lỗi", "Vui lòng điền đầy đủ thông tin!");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert("⚠️ Lỗi", "Mật khẩu xác nhận không khớp!");
-      return;
-    }
-
     try {
-      const response = await fetch("http://192.168.175.118:5000/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName,
-          email,
-          password,
-          confirmPassword,
-        }),
+      if (!fullName || !email || !password || !confirmPassword) {
+        Alert.alert("Thông báo", "Vui lòng điền đầy đủ thông tin");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        Alert.alert("Thông báo", "Mật khẩu xác nhận không khớp");
+        return;
+      }
+
+      const response = await axios.post("/auth/register", {
+        fullName,
+        email,
+        password,
+        confirmPassword,
       });
 
-      const data = await response.json();
-
-      if (response.status === 201) {
-        Alert.alert("✅ Thành công", data.message, [
-          { text: "OK", onPress: () => navigation.navigate("Login") },
-        ]);
-      } else {
-        Alert.alert("❌ Thất bại", data.message || "Có lỗi xảy ra!");
-      }
+      Alert.alert("Thành công", "Đăng ký tài khoản thành công!", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Login"),
+        },
+      ]);
     } catch (error) {
-      Alert.alert("❌ Lỗi kết nối", error.message);
+      Alert.alert(
+        "Đăng ký thất bại",
+        error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại"
+      );
     }
   };
 

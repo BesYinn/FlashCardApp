@@ -89,7 +89,11 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 const User = mongoose.model('User', userSchema);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(bodyParser.json());
 app.use(helmet()); // Thêm các security headers
 app.use(helmet.noSniff()); // Ngăn MIME sniffing
@@ -123,27 +127,22 @@ const errorHandler = (err, req, res, next) => {
     timestamp: new Date().toISOString()
   });
   
-  console.error(err.stack);
-  
-  // Handle specific error types
   if (err.name === 'ValidationError') {
     const messages = Object.values(err.errors).map(error => error.message);
     return res.status(400).json({ 
-      message: 'Validation Error', 
+      message: 'Lỗi xác thực', 
       errors: messages 
     });
   }
 
-  // Handle duplicate key error (for unique fields like email)
   if (err.code === 11000) {
     return res.status(409).json({ 
-      message: 'Email already exists' 
+      message: 'Email này đã tồn tại trong hệ thống' 
     });
   }
 
-  // Generic server error
   res.status(500).json({ 
-    message: 'Internal Server Error',
+    message: 'Đã xảy ra lỗi, vui lòng thử lại sau',
     error: process.env.NODE_ENV === 'production' ? {} : err.message 
   });
 };
@@ -152,47 +151,56 @@ const errorHandler = (err, req, res, next) => {
 
 const refreshTokens = new Set();
 
-// Register new user
+// Registration route
 app.post('/auth/register', async (req, res, next) => {
   try {
     const { fullName, email, password, confirmPassword } = req.body;
 
-    // Validate input
-    if (!fullName || !email || !password || !confirmPassword) {
-      return res.status(400).json({ message: 'All fields are required' });
+    // Kiểm tra độ dài họ tên
+    if (fullName.length < 2) {
+      return res.status(400).json({ 
+        message: 'Họ và tên phải có ít nhất 2 ký tự' 
+      });
     }
 
-    // Check if passwords match
+    // Kiểm tra email hợp lệ
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ 
+        message: 'Email không hợp lệ. Vui lòng nhập đúng định dạng email (vd: example@gmail.com)' 
+      });
+    }
+
+    // Kiểm tra độ dài mật khẩu
+    if (password.length < 6) {
+      return res.status(400).json({ 
+        message: 'Mật khẩu phải có ít nhất 6 ký tự' 
+      });
+    }
+
+    // Kiểm tra mật khẩu xác nhận
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
+      return res.status(400).json({ 
+        message: 'Mật khẩu xác nhận không khớp' 
+      });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: 'User already exists' });
+      return res.status(409).json({ message: 'Email này đã được sử dụng' });
     }
 
-    // Create new user
+    // Tạo người dùng mới
     const newUser = new User({
       fullName,
       email,
       password
     });
 
-    // Save user to database
     await newUser.save();
 
-    // Respond with success (exclude password)
-    const userResponse = {
-      _id: newUser._id,
-      fullName: newUser.fullName,
-      email: newUser.email
-    };
-
     res.status(201).json({
-      message: 'User registered successfully',
-      user: userResponse
+      success: true,
+      message: 'Đăng ký tài khoản thành công'
     });
   } catch (error) {
     next(error);
@@ -204,21 +212,18 @@ app.post('/auth/login', async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+      return res.status(400).json({ message: 'Vui lòng nhập email và mật khẩu' });
     }
 
-    // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Email hoặc mật khẩu không đúng' });
     }
 
-    // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Email hoặc mật khẩu không đúng' });
     }
 
     // Generate JWT token
@@ -245,16 +250,14 @@ app.post('/auth/login', async (req, res, next) => {
 
     refreshTokens.add(refreshToken);
 
-    // Respond with token and user info
     res.json({
-      message: 'Login successful',
+      message: 'Đăng nhập thành công',
       token,
       refreshToken,
       user: {
         id: user._id,
         fullName: user.fullName,
-        email: user.email,
-        role: user.role
+        email: user.email
       }
     });
   } catch (error) {
@@ -287,15 +290,15 @@ app.post('/auth/refresh-token', async (req, res) => {
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (token == null) {
-    return res.status(401).json({ message: 'No token provided' });
+    return res.status(401).json({ message: 'Bạn cần đăng nhập để tiếp tục' });
   }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ message: 'Invalid or expired token' });
+      return res.status(403).json({ message: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại' });
     }
     req.user = user;
     next();
@@ -308,6 +311,11 @@ app.get('/protected', authenticateToken, (req, res) => {
     message: 'Access granted to protected route',
     user: req.user 
   });
+});
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Validation middleware

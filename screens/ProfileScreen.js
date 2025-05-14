@@ -1,28 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
   SafeAreaView,
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../context/AuthContext';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
-  const [user] = useState({
-    name: 'Nguyen Van A',
-    email: 'example@email.com',
-    avatar: null,
-  });
+  const { logout, userData } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
-      'Đăng xuất',
-      'Bạn có chắc chắn muốn đăng xuất?',
+      'Xác nhận đăng xuất',
+      'Bạn có chắc chắn muốn đăng xuất khỏi ứng dụng?',
       [
         {
           text: 'Hủy',
@@ -31,7 +28,8 @@ const ProfileScreen = () => {
         {
           text: 'Đăng xuất',
           style: 'destructive',
-          onPress: () => {
+          onPress: async () => {
+            await logout();
             navigation.reset({
               index: 0,
               routes: [{ name: 'Login' }],
@@ -50,39 +48,12 @@ const ProfileScreen = () => {
 
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
-          {user.avatar ? (
-            <Image source={{ uri: user.avatar }} style={styles.avatar} />
-          ) : (
-            <View style={[styles.avatar, styles.placeholderAvatar]}>
-              <Ionicons name="person" size={40} color="#666" />
-            </View>
-          )}
-          <TouchableOpacity style={styles.editAvatarButton}>
-            <Ionicons name="camera" size={20} color="#fff" />
-          </TouchableOpacity>
+          <View style={[styles.avatar, styles.placeholderAvatar]}>
+            <Ionicons name="person" size={40} color="#666" />
+          </View>
         </View>
-        <Text style={styles.userName}>{user.name}</Text>
-        <Text style={styles.userEmail}>{user.email}</Text>
-      </View>
-
-      <View style={styles.menuSection}>
-        <TouchableOpacity style={styles.menuItem}>
-          <Ionicons name="person-outline" size={24} color="#4a90e2" />
-          <Text style={styles.menuText}>Chỉnh sửa thông tin</Text>
-          <Ionicons name="chevron-forward" size={24} color="#ccc" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem}>
-          <Ionicons name="lock-closed-outline" size={24} color="#4a90e2" />
-          <Text style={styles.menuText}>Đổi mật khẩu</Text>
-          <Ionicons name="chevron-forward" size={24} color="#ccc" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem}>
-          <Ionicons name="settings-outline" size={24} color="#4a90e2" />
-          <Text style={styles.menuText}>Cài đặt</Text>
-          <Ionicons name="chevron-forward" size={24} color="#ccc" />
-        </TouchableOpacity>
+        <Text style={styles.userName}>{userData?.fullName || 'N/A'}</Text>
+        <Text style={styles.userEmail}>{userData?.email || 'N/A'}</Text>
       </View>
 
       <TouchableOpacity 
@@ -132,19 +103,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  editAvatarButton: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#4a90e2',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#fff',
-  },
   userName: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -153,22 +111,6 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 16,
     color: '#666',
-  },
-  menuSection: {
-    backgroundColor: '#fff',
-    marginBottom: 20,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  menuText: {
-    flex: 1,
-    marginLeft: 16,
-    fontSize: 16,
   },
   logoutButton: {
     flexDirection: 'row',

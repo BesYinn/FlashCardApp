@@ -1,52 +1,39 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useContext } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
-const LoginScreen = () => {
-  const navigation = useNavigation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useContext(AuthContext);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("⚠️ Lỗi", "Vui lòng nhập email và mật khẩu!");
-      return;
-    }
-
     try {
-      const response = await fetch("http://192.168.175.118:5000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+      if (!email || !password) {
+        Alert.alert('Thông báo', 'Vui lòng nhập đầy đủ thông tin');
+        return;
+      }
+
+      const response = await axios.post('/auth/login', {
+        email,
+        password
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert("✅ Đăng nhập thành công!");
-        navigation.replace('MainApp'); 
-        // Có thể lưu token vào AsyncStorage nếu cần
-        // await AsyncStorage.setItem('token', data.token);
-      } else {
-        Alert.alert(
-          "❌ Đăng nhập thất bại",
-          data.message || "Sai email hoặc mật khẩu."
-        );
+      if (response.data && response.data.token) {
+        await login(response.data.token, response.data.user);
+        Alert.alert('Thành công', 'Đăng nhập thành công!', [
+          {
+            text: 'OK',
+            onPress: () => navigation.replace('MainApp')
+          }
+        ]);
       }
     } catch (error) {
-      Alert.alert("❌ Lỗi kết nối", error.message);
+      Alert.alert(
+        'Đăng nhập thất bại',
+        error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại'
+      );
     }
   };
 
@@ -77,7 +64,7 @@ const LoginScreen = () => {
       {/* Thêm nút quên mật khẩu */}
       <TouchableOpacity
         style={styles.forgotPassword}
-        onPress={() => navigation.navigate("ForgotPassword")}
+        onPress={() => navigation.navigate('ForgotPassword')}
       >
         <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
       </TouchableOpacity>
@@ -85,7 +72,7 @@ const LoginScreen = () => {
       {/* Thêm nút đăng ký */}
       <TouchableOpacity
         style={styles.registerLink}
-        onPress={() => navigation.navigate("Register")}
+        onPress={() => navigation.navigate('Register')}
       >
         <Text style={styles.registerText}>Chưa có tài khoản? Đăng ký ngay</Text>
       </TouchableOpacity>
@@ -100,55 +87,55 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#e8f0fe",
-    justifyContent: "center",
+    backgroundColor: '#e8f0fe',
+    justifyContent: 'center',
     paddingHorizontal: 30,
   },
   title: {
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 40,
-    textAlign: "center",
+    textAlign: 'center',
   },
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     padding: 14,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     fontSize: 16,
     marginBottom: 20,
   },
   button: {
-    backgroundColor: "#4a90e2",
+    backgroundColor: '#4a90e2',
     padding: 14,
     borderRadius: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 18,
   },
   hint: {
     marginTop: 20,
     fontSize: 14,
-    textAlign: "center",
-    color: "#888",
+    textAlign: 'center',
+    color: '#888',
   },
   registerLink: {
     marginTop: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   registerText: {
-    color: "#4a90e2",
+    color: '#4a90e2',
     fontSize: 16,
   },
   forgotPassword: {
     marginTop: 15,
-    alignItems: "center",
+    alignItems: 'center',
   },
   forgotPasswordText: {
-    color: "#4a90e2",
+    color: '#4a90e2',
     fontSize: 16,
   },
 });
