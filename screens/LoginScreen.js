@@ -36,7 +36,7 @@ const LoginScreen = () => {
 
       if (response.ok) {
         Alert.alert("✅ Đăng nhập thành công!");
-        navigation.replace("Home");
+        navigation.replace('MainApp'); 
         // Có thể lưu token vào AsyncStorage nếu cần
         // await AsyncStorage.setItem('token', data.token);
       } else {
