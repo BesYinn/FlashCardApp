@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
-const achievements = [
-  { id: '1', title: 'Học được 50 từ', reward: '🎖️ Huy hiệu Chăm chỉ', points: 50 },
-  { id: '2', title: 'Chơi 5 trò chơi', reward: '🏆 Huy hiệu Game thủ', points: 30 },
-  { id: '3', title: 'Đăng nhập 7 ngày liên tiếp', reward: '🔥 Huy hiệu Siêng năng', points: 20 },
-];
+import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 
 export default function AchievementsScreen() {
   const navigation = useNavigation();
+  const { userToken } = useContext(AuthContext);
+  const [learnedCount, setLearnedCount] = useState(0);
+
+  useEffect(() => {
+    axios.get('/api/learned/count', {
+      headers: { Authorization: `Bearer ${userToken}` }
+    }).then(res => setLearnedCount(res.data.count));
+  }, []);
+
+  const achievements = [
+    { id: '1', title: `Đã học ${learnedCount} từ vựng`, reward: '🎖️ Huy hiệu Chăm chỉ', points: learnedCount },
+    // { id: '2', title: 'Chơi 5 trò chơi', reward: '🏆 Huy hiệu Game thủ', points: 30 },
+    // { id: '3', title: 'Đăng nhập 7 ngày liên tiếp', reward: '🔥 Huy hiệu Siêng năng', points: 20 },
+  ];
+
+  const handleShowLearnedWords = () => {
+    navigation.navigate('LearnedWords');
+  };
 
   return (
     <View style={styles.container}>
@@ -18,11 +32,11 @@ export default function AchievementsScreen() {
         data={achievements}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View style={styles.achievement}>
+          <TouchableOpacity style={styles.achievement} onPress={handleShowLearnedWords}>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.reward}>{item.reward}</Text>
             <Text style={styles.points}>+{item.points} điểm</Text>
-          </View>
+          </TouchableOpacity>
         )}
       />
       <TouchableOpacity
