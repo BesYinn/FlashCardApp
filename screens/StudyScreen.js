@@ -145,13 +145,13 @@ const StudyScreen = () => {
         </TouchableOpacity>
 
         <View style={styles.bottomActions}>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={[styles.actionButton, styles.saveButton]}
             onPress={handleSave}
           >
             <Ionicons name="bookmark" size={24} color="#fff" />
             <Text style={styles.actionText}>Lưu lại</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity 
             style={[styles.actionButton, styles.learnedButton]}
