@@ -65,9 +65,20 @@ const StudyScreen = () => {
     const currentWord = words[currentIndex];
     const wordId = currentWord._id || currentWord.id;
 
-    if (!learnedWords.includes(wordId)) {
-      setLearnedWords([...learnedWords, wordId]);
+    if (learnedWords.includes(wordId)) {
+      Alert.alert(
+        "Từ đã học trước đó",
+        `🔤 Từ: ${currentWord.word}\n📚 Pinyin: ${currentWord.pinyin}\n📖 Nghĩa: ${currentWord.meaning}`,
+        [
+          { text: "Ở lại", style: "cancel" },
+          { text: "Tiếp tục", onPress: () => handleNext() },
+        ]
+      );
+      return;
     }
+
+    // Nếu chưa học thì xử lý bình thường
+    setLearnedWords([...learnedWords, wordId]);
 
     if (userToken) {
       await markWordAsLearned(wordId, userToken);
@@ -76,9 +87,9 @@ const StudyScreen = () => {
     }
 
     Alert.alert(
-      "Thông tin từ đã học",
-      `Từ: ${currentWord.word}\nPinyin: ${currentWord.pinyin}\nNghĩa: ${currentWord.meaning}`,
-      [{ text: "OK", onPress: () => handleNext() }]
+      "Đã học từ thành công 🎉",
+      `Bạn đã hoàn thành từ này!\n\n🔤 Từ: ${currentWord.word}\n📚 Pinyin: ${currentWord.pinyin}\n📖 Nghĩa: ${currentWord.meaning}`,
+      [{ text: "Tiếp tục", onPress: () => handleNext() }]
     );
   };
 
