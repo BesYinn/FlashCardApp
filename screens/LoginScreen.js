@@ -61,13 +61,14 @@ const LoginScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Đăng nhập</Text>
       </TouchableOpacity>
+
       {/* Thêm nút quên mật khẩu */}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.forgotPassword}
         onPress={() => navigation.navigate('ForgotPassword')}
       >
         <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Thêm nút đăng ký */}
       <TouchableOpacity
@@ -77,9 +78,9 @@ const LoginScreen = ({ navigation }) => {
         <Text style={styles.registerText}>Chưa có tài khoản? Đăng ký ngay</Text>
       </TouchableOpacity>
 
-      <Text style={styles.hint}>
+      {/* <Text style={styles.hint}>
         Email: test@example.com | Mật khẩu: 123456
-      </Text>
+      </Text> */}
     </View>
   );
 };
