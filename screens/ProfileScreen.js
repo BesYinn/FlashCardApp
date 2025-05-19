@@ -98,6 +98,15 @@ const ProfileScreen = () => {
           <Ionicons name="trophy-outline" size={24} color="#f7b731" />
           <Text style={styles.achievementText}>Xem thành tích</Text>
         </TouchableOpacity>
+
+        {/* Nút điều hướng đến màn hình Flashcard của tôi */}
+        <TouchableOpacity
+          style={styles.settingButton}
+          onPress={() => navigation.navigate('MyFlashcards')}
+        >
+          <Ionicons name="albums-outline" size={24} color="#007bff" />
+          <Text style={styles.settingText}>Flashcard của tôi</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

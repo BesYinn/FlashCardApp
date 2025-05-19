@@ -13,6 +13,8 @@ import LogoutScreen from '../screens/LogoutScreen';
 import AchievementsScreen from '../screens/AchievementsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ReminderSettingsScreen from '../screens/ReminderSettingsScreen';
+import MyFlashcardsScreen from '../screens/MyFlashcardsScreen';
+import LearnedWordsScreen from '../screens/LearnedWordsScreen';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +39,8 @@ const AppNavigator = () => {
       <Stack.Screen name="Achievements" component={AchievementsScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="ReminderSettings" component={ReminderSettingsScreen} />
+      <Stack.Screen name="MyFlashcards" component={MyFlashcardsScreen} />
+      <Stack.Screen name="LearnedWords" component={LearnedWordsScreen} />
     </Stack.Navigator>
   );
 };

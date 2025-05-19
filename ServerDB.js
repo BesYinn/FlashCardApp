@@ -116,6 +116,29 @@ const flashcardSchema = new mongoose.Schema(
 
 const Flashcard = mongoose.model("Flashcard", flashcardSchema);
 
+// Schema for Learned Words
+const learnedWordSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    wordId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Flashcard",
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { collection: "LearnedWords" }
+);
+
+const LearnedWord = mongoose.model("LearnedWord", learnedWordSchema);
+
 // Middleware
 app.use(
   cors({
@@ -400,6 +423,25 @@ app.get("/api/flashcards", authenticateToken, async (req, res, next) => {
   }
 });
 
+// POST /api/learned
+app.post("/api/learned", authenticateToken, async (req, res) => {
+  const { wordId } = req.body;
+  await LearnedWord.create({ userId: req.user.id, wordId });
+  res.json({ success: true });
+});
+
+// GET /api/learned
+app.get('/api/learned', authenticateToken, async (req, res) => {
+  const learned = await LearnedWord.find({ userId: req.user.id }).populate('wordId');
+  res.json({ learnedWords: learned.map(l => l.wordId) });
+});
+
+// GET /api/learned/count
+app.get('/api/learned/count', authenticateToken, async (req, res) => {
+  const count = await LearnedWord.countDocuments({ userId: req.user.id });
+  res.json({ count });
+});
+
 // Health check route
 app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
@@ -429,3 +471,20 @@ app.listen(PORT, () => {
 
 // Export for potential testing
 module.exports = { app, User };
+
+// Gọi khi người dùng học xong một từ (ví dụ trong StudyScreen.js)
+const markWordAsLearned = async (wordId, token) => {
+  try {
+    await fetch('http://192.168.1.122:5000/api/learned', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ wordId }),
+    });
+    // Có thể cập nhật UI hoặc thông báo thành công ở đây
+  } catch (error) {
+    console.log('Lỗi khi lưu từ đã học:', error);
+  }
+};
