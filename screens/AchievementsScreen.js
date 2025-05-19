@@ -8,8 +8,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
-import API from "../api";
+import axios from '../utils/axiosConfig';
 
 export default function AchievementsScreen() {
   const navigation = useNavigation();
@@ -19,7 +18,7 @@ export default function AchievementsScreen() {
   useEffect(() => {
     const fetchLearnedCount = async () => {
       try {
-        const res = await API.get("/api/learned/count", {
+        const res = await axios.get("/api/learned/count", {
           headers: { Authorization: `Bearer ${userToken}` },
         });
         setLearnedCount(res.data.count);

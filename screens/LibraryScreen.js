@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import VocabularyItem from "../component/VocabularyItem";
+import axios from '../utils/axiosConfig';
 
 // Import trực tiếp từ file JSON
 const defaultCards = require("../data/defaultCards.json");
@@ -28,10 +29,9 @@ const LibraryScreen = () => {
 
   const loadVocabularyFromAPI = async () => {
     try {
-      const response = await fetch("http://192.168.1.132:5000/api/vocabulary");
-      const json = await response.json();
-      console.log("Fetched from server:", json.data);
-      setVocabularyList(json.data);
+      const response = await axios.get("/api/vocabulary"); // Gọi API bằng axios
+      console.log("Fetched from server:", response.data);  // Đảm bảo lấy dữ liệu từ response
+      setVocabularyList(response.data.data);  // Lưu dữ liệu vào state
     } catch (error) {
       console.error("Lỗi khi tải từ vựng:", error);
     }
