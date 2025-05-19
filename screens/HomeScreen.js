@@ -1,42 +1,26 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useContext } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { AuthContext } from '../context/AuthContext';
 
 const HomeScreen = () => {
-  const navigation = useNavigation();
+  const { userData } = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🎴 FlashCardApp</Text>
-      <Text style={styles.subtitle}>Chào mừng bạn đến với ứng dụng học từ vựng tiếng Trung!</Text>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Learn')}
-      >
-        <Text style={styles.buttonText}>📚 Học từ</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Game')}
-      >
-        <Text style={styles.buttonText}>🎮 Chơi game</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Library')}
-      >
-        <Text style={styles.buttonText}>📖 Thư viện từ</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('CreateCard')}
-      >
-        <Text style={styles.buttonText}>➕ Tạo flashcard</Text>
-      </TouchableOpacity>
+      <Image
+        source={require('../assets/logo.png')}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <Text style={styles.title}>FlashCardApp</Text>
+      <Text style={styles.greeting}>
+        {userData?.fullName
+          ? `Xin chào, ${userData.fullName}!`
+          : 'Chào mừng bạn đến với ứng dụng học từ vựng tiếng Trung!'}
+      </Text>
+      <Text style={styles.tip}>
+        Sử dụng thanh tab bên dưới để bắt đầu học, xem thư viện, thành tích hoặc cài đặt ứng dụng.
+      </Text>
     </View>
   );
 };
@@ -47,34 +31,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f8fb',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 18,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
+    color: '#007bff',
     marginBottom: 10,
-    color: '#333',
+    letterSpacing: 1,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 40,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#6a9cfc',
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 20,
-    marginVertical: 10,
-    width: '100%',
-    alignItems: 'center',
-    elevation: 3,
-  },
-  buttonText: {
-    color: '#fff',
+  greeting: {
     fontSize: 18,
-    fontWeight: '600',
+    color: '#333',
+    marginBottom: 18,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  tip: {
+    fontSize: 15,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginHorizontal: 10,
   },
 });
 
