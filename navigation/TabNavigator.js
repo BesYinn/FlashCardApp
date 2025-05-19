@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 import HomeScreen from '../screens/HomeScreen';
 import LibraryScreen from '../screens/LibraryScreen';
@@ -11,6 +12,8 @@ import ProfileScreen from '../screens/ProfileScreen';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const navigation = useNavigation();
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
