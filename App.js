@@ -5,7 +5,7 @@ import AppNavigator from './navigation/AppNavigator';
 import axios from 'axios';
 
 // Set base URL for axios with your computer's IP address
-axios.defaults.baseURL = 'http://192.168.2.23:5000';
+axios.defaults.baseURL = 'http://192.168.1.215:5000';
 
 export default function App() {
   return (
