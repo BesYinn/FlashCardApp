@@ -81,14 +81,14 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Nút điều hướng đến màn hình Cài đặt */}
+        {/* Nút điều hướng đến màn hình Cài đặt
         <TouchableOpacity
           style={styles.settingButton}
           onPress={() => navigation.navigate('Settings')}
         >
           <Ionicons name="settings-outline" size={24} color="#007bff" />
           <Text style={styles.settingText}>Cài đặt ứng dụng</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Nút điều hướng đến màn hình Thành tích */}
         <TouchableOpacity
