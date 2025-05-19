@@ -138,7 +138,7 @@ const learnedWordSchema = new mongoose.Schema(
     },
     wordId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Flashcard",
+      ref: "Vocabulary",
       required: true,
     },
     createdAt: {
@@ -458,6 +458,21 @@ app.post("/api/learned", authenticateToken, async (req, res) => {
   // Tạo từ đã học mới
   await LearnedWord.create({ userId: req.user.id, wordId });
   res.json({ success: true });
+});
+
+// GET /api/learnedd
+app.get("/api/learnedd", authenticateToken, async (req, res) => {
+  try {
+    // Lấy danh sách các từ đã học của người dùng
+    const learnedWords = await LearnedWord.find({
+      userId: req.user.id,
+    }).populate("wordId");
+
+    // Trả về danh sách các từ đã học với thông tin chi tiết
+    res.json({ learnedWords });
+  } catch (error) {
+    next(error);
+  }
 });
 
 // GET /api/learned/count

@@ -10,7 +10,7 @@ import {
 import { AuthContext } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import axios from "../utils/axiosConfig"; // dùng instance thay vì axios mặc định
+import axios from "../utils/axiosConfig"; // Dùng instance đã cấu hình
 
 export default function LearnedWordsScreen() {
   const { userToken } = useContext(AuthContext);
@@ -21,20 +21,14 @@ export default function LearnedWordsScreen() {
   useEffect(() => {
     const fetchLearnedWords = async () => {
       try {
-        const res = await axios.get("/api/learned", {
+        const res = await axios.get("/api/learnedd", {
           headers: { Authorization: `Bearer ${userToken}` },
         });
 
         console.log("Dữ liệu từ API:", res.data);
 
-        // Kiểm tra và lưu từ đã học vào state
-        if (res.data.learnedWords) {
-          const validWords = res.data.learnedWords.filter(
-            (word) => word && word.word && word.meaning
-          );
-          console.log("Từ đã học hợp lệ:", validWords);
-          setWords(validWords);
-        }
+        // Không kiểm tra, gán thẳng dữ liệu
+        setWords(res.data.learnedWords || []); // đảm bảo không undefined
       } catch (error) {
         console.error("Lỗi khi lấy từ đã học:", error);
       } finally {
@@ -56,19 +50,25 @@ export default function LearnedWordsScreen() {
         <Ionicons name="arrow-back" size={24} color="#007bff" />
         <Text style={styles.backText}>Quay lại</Text>
       </TouchableOpacity>
+
       <Text style={styles.header}>Các từ đã học</Text>
+
       {loading ? (
         <ActivityIndicator size="large" color="#007bff" />
       ) : (
         <FlatList
           data={words}
-          keyExtractor={(item) => item._id.toString()} // Sửa lại keyExtractor
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.word}>{item.word}</Text>
-              <Text style={styles.meaning}>{item.meaning}</Text>
-            </View>
-          )}
+          keyExtractor={(item, index) => item._id?.toString() || index.toString()}
+          renderItem={({ item }) => {
+            const word = item.wordId?.word || "Không xác định";
+            const meaning = item.wordId?.meaning || "";
+            return (
+              <View style={styles.card}>
+                <Text style={styles.word}>{word}</Text>
+                <Text style={styles.meaning}>{meaning}</Text>
+              </View>
+            );
+          }}
         />
       )}
     </View>
