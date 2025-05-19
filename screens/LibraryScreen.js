@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,46 +8,42 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import VocabularyItem from '../component/VocabularyItem';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import VocabularyItem from "../component/VocabularyItem";
 
 // Import trực tiếp từ file JSON
-const defaultCards = require('../data/defaultCards.json');
+const defaultCards = require("../data/defaultCards.json");
 
 const LibraryScreen = () => {
   const navigation = useNavigation();
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [vocabularyList, setVocabularyList] = useState([]);
   const [expandedCategories, setExpandedCategories] = useState({});
 
   useEffect(() => {
-    console.log('Attempting to load vocabulary...');
-    loadVocabulary();
+    loadVocabularyFromAPI();
   }, []);
 
-  const loadVocabulary = () => {
+  const loadVocabularyFromAPI = async () => {
     try {
-      if (defaultCards && defaultCards.cards) {
-        console.log('Loaded cards:', defaultCards.cards); // Debug log
-        setVocabularyList(defaultCards.cards);
-      } else {
-        console.log('No cards found in defaultCards'); // Debug log
-        setVocabularyList([]);
-      }
+      const response = await fetch("http://192.168.1.132:5000/api/vocabulary");
+      const json = await response.json();
+      console.log("Fetched from server:", json.data);
+      setVocabularyList(json.data);
     } catch (error) {
-      console.error('Error loading vocabulary:', error);
-      setVocabularyList([]);
+      console.error("Lỗi khi tải từ vựng:", error);
     }
   };
 
-  const filteredList = vocabularyList?.filter(
-    (item) =>
-      item.word?.includes(searchText) ||
-      item.pinyin?.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.meaning?.toLowerCase().includes(searchText.toLowerCase())
-  ) || [];
+  const filteredList =
+    vocabularyList?.filter(
+      (item) =>
+        item.word?.includes(searchText) ||
+        item.pinyin?.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.meaning?.toLowerCase().includes(searchText.toLowerCase())
+    ) || [];
 
   const groupedCards = filteredList.reduce((groups, card) => {
     const category = card.category;
@@ -61,19 +57,19 @@ const LibraryScreen = () => {
   const handleCategoryPress = (category) => {
     const categoryWords = groupedCards[category];
     if (categoryWords && categoryWords.length > 0) {
-      navigation.navigate('Learn', {
+      navigation.navigate("Learn", {
         words: categoryWords,
-        categoryName: category
+        categoryName: category,
       });
     } else {
-      Alert.alert('Thông báo', 'Không có từ vựng nào trong danh mục này!');
+      Alert.alert("Thông báo", "Không có từ vựng nào trong danh mục này!");
     }
   };
 
   const toggleCategory = (categoryId) => {
-    setExpandedCategories(prev => ({
+    setExpandedCategories((prev) => ({
       ...prev,
-      [categoryId]: !prev[categoryId]
+      [categoryId]: !prev[categoryId],
     }));
   };
 
@@ -81,18 +77,18 @@ const LibraryScreen = () => {
   const sections = Object.entries(groupedCards).map(([category, words]) => ({
     title: category,
     data: words,
-    expanded: expandedCategories[category] || false
+    expanded: expandedCategories[category] || false,
   }));
 
   const toggleSection = (sectionTitle) => {
-    setExpandedCategories(prev => ({
+    setExpandedCategories((prev) => ({
       ...prev,
-      [sectionTitle]: !prev[sectionTitle]
+      [sectionTitle]: !prev[sectionTitle],
     }));
   };
 
   const renderSectionHeader = ({ section }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.categoryHeader}
       onPress={() => handleStudy(section)}
     >
@@ -100,14 +96,16 @@ const LibraryScreen = () => {
         <Text style={styles.categoryTitle}>{section.title}</Text>
         <Text style={styles.wordCount}>({section.data.length} từ)</Text>
       </View>
-      
+
       {/* Thêm nút Học ngay */}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.studyButton}
-        onPress={() => handleStudy({
-          title: section.title,
-          words: section.data
-        })}
+        onPress={() =>
+          handleStudy({
+            title: section.title,
+            words: section.data,
+          })
+        }
       >
         <Text style={styles.studyButtonText}>Học ngay</Text>
       </TouchableOpacity>
@@ -116,7 +114,7 @@ const LibraryScreen = () => {
 
   const renderItem = ({ item, section }) => {
     if (!expandedCategories[section.title]) return null;
-    
+
     return (
       <View style={styles.wordItem}>
         <Text style={styles.chineseText}>{item.word}</Text>
@@ -128,36 +126,32 @@ const LibraryScreen = () => {
 
   const handleStudy = (category) => {
     if (!category?.words?.length) {
-      Alert.alert(
-        'Thông báo', 
-        'Không có từ vựng trong danh mục này',
-        [
-          {
-            text: 'Đóng',
-            style: 'cancel'
-          }
-        ]
-      );
+      Alert.alert("Thông báo", "Không có từ vựng trong danh mục này", [
+        {
+          text: "Đóng",
+          style: "cancel",
+        },
+      ]);
       return;
     }
 
-    navigation.navigate('Study', {
+    navigation.navigate("Study", {
       words: category.words,
-      categoryName: category.title
+      categoryName: category.title,
     });
   };
 
   const handleCreateCard = () => {
-    navigation.navigate('CreateCard');
+    navigation.navigate("CreateCard");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>📖 Thư viện từ vựng</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate('CreateCard')}
+          onPress={() => navigation.navigate("CreateCard")}
         >
           <Ionicons name="add-circle" size={24} color="#4a90e2" />
           <Text style={styles.addButtonText}>Thêm mới</Text>
@@ -178,7 +172,7 @@ const LibraryScreen = () => {
         sections={sections}
         renderSectionHeader={renderSectionHeader}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         stickySectionHeadersEnabled={false}
         ListEmptyComponent={
           <Text style={styles.noResult}>Không tìm thấy từ phù hợp.</Text>
@@ -192,41 +186,41 @@ const LibraryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f9ff',
+    backgroundColor: "#f5f9ff",
     paddingTop: 50,
     paddingHorizontal: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   addButtonText: {
     marginLeft: 4,
-    color: '#4a90e2',
+    color: "#4a90e2",
     fontSize: 16,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
     margin: 16,
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: "#eee",
   },
   searchInput: {
     flex: 1,
@@ -237,84 +231,84 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   noResult: {
-    textAlign: 'center',
-    color: '#999',
+    textAlign: "center",
+    color: "#999",
     fontSize: 16,
     marginTop: 40,
   },
   categoryContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     marginBottom: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: "#eee",
   },
   categoryHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
   },
   categoryTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   categoryTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4a90e2',
+    fontWeight: "bold",
+    color: "#4a90e2",
     marginRight: 8,
   },
   wordCount: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   wordsList: {
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: "#eee",
   },
   wordItem: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   chineseText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   pinyinText: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     marginVertical: 4,
   },
   meaningText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   viewMoreButton: {
     padding: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   viewMoreText: {
-    color: '#4a90e2',
+    color: "#4a90e2",
     fontSize: 14,
   },
   wordsContainer: {
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: "#eee",
   },
   studyButton: {
-    backgroundColor: '#4a90e2',
+    backgroundColor: "#4a90e2",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   studyButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
-    fontWeight: 'bold',
-  }
+    fontWeight: "bold",
+  },
 });
 
 export default LibraryScreen;

@@ -84,6 +84,18 @@ userSchema.pre("save", async function (next) {
   }
 });
 
+const vocabularySchema = new mongoose.Schema(
+  {
+    word: { type: String, required: true },
+    pinyin: String,
+    meaning: { type: String, required: true },
+    category: String,
+  },
+  { collection: "Vocabulary" }
+);
+
+const Vocabulary = mongoose.model("Vocabulary", vocabularySchema);
+
 // Method to compare password
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
@@ -423,21 +435,33 @@ app.get("/api/flashcards", authenticateToken, async (req, res, next) => {
   }
 });
 
-// POST /api/learned
+// GET /api/learned
 app.post("/api/learned", authenticateToken, async (req, res) => {
   const { wordId } = req.body;
+
+  // Kiểm tra từ đã tồn tại trong Vocabulary
+  const word = await Vocabulary.findById(wordId);
+  if (!word) {
+    return res.status(404).json({ message: "Từ không tồn tại" });
+  }
+
+  // Kiểm tra nếu từ đã học rồi
+  const exists = await LearnedWord.findOne({
+    userId: req.user.id,
+    wordId: wordId,
+  });
+
+  if (exists) {
+    return res.status(200).json({ success: true, message: "Đã học rồi" });
+  }
+
+  // Tạo từ đã học mới
   await LearnedWord.create({ userId: req.user.id, wordId });
   res.json({ success: true });
 });
 
-// GET /api/learned
-app.get('/api/learned', authenticateToken, async (req, res) => {
-  const learned = await LearnedWord.find({ userId: req.user.id }).populate('wordId');
-  res.json({ learnedWords: learned.map(l => l.wordId) });
-});
-
 // GET /api/learned/count
-app.get('/api/learned/count', authenticateToken, async (req, res) => {
+app.get("/api/learned/count", authenticateToken, async (req, res) => {
   const count = await LearnedWord.countDocuments({ userId: req.user.id });
   res.json({ count });
 });
@@ -475,16 +499,45 @@ module.exports = { app, User };
 // Gọi khi người dùng học xong một từ (ví dụ trong StudyScreen.js)
 const markWordAsLearned = async (wordId, token) => {
   try {
-    await fetch('http://192.168.1.132:5000/api/learned', {
-      method: 'POST',
+    await fetch("http://192.168.1.132:5000/api/learned", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ wordId }),
     });
     // Có thể cập nhật UI hoặc thông báo thành công ở đây
   } catch (error) {
-    console.log('Lỗi khi lưu từ đã học:', error);
+    console.log("Lỗi khi lưu từ đã học:", error);
   }
 };
+
+app.get("/api/vocabulary", async (req, res, next) => {
+  try {
+    const vocabList = await Vocabulary.find({});
+    res.json({ data: vocabList });
+  } catch (err) {
+    next(err);
+  }
+});
+
+const fetchVocabulary = async () => {
+  try {
+    const res = await fetch("http://192.168.1.132:5000/api/vocabulary");
+    const data = await res.json();
+    console.log("Từ vựng:", data.data);
+  } catch (error) {
+    console.error("Lỗi khi lấy từ vựng:", error);
+  }
+};
+
+app.get("/api/vocabulary/category/:name", async (req, res, next) => {
+  try {
+    const { name } = req.params;
+    const vocabList = await Vocabulary.find({ category: name });
+    res.json({ data: vocabList });
+  } catch (err) {
+    next(err);
+  }
+});

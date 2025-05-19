@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -7,16 +7,19 @@ import {
   Animated,
   Dimensions,
   Alert,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../context/AuthContext.js"; // điều chỉnh path nếu cần
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const StudyScreen = () => {
+  const { userToken } = useContext(AuthContext);
   const navigation = useNavigation();
   const route = useRoute();
-  const { words = [], categoryName = 'Từ vựng' } = route.params || {};
+  const { words = [], categoryName = "Từ vựng" } = route.params || {};
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -43,14 +46,10 @@ const StudyScreen = () => {
       flipAnim.setValue(0);
     } else {
       // Hiển thị thông báo hoàn thành
-      Alert.alert(
-        "Hoàn thành!",
-        "Bạn đã học xong bộ từ vựng này.",
-        [
-          { text: "Học lại", onPress: () => resetStudy() },
-          { text: "Quay lại", onPress: () => navigation.goBack() }
-        ]
-      );
+      Alert.alert("Hoàn thành!", "Bạn đã học xong bộ từ vựng này.", [
+        { text: "Học lại", onPress: () => resetStudy() },
+        { text: "Quay lại", onPress: () => navigation.goBack() },
+      ]);
     }
   };
 
@@ -62,12 +61,25 @@ const StudyScreen = () => {
     handleNext();
   };
 
-  const handleMarkLearned = () => {
+  const handleMarkLearned = async () => {
     const currentWord = words[currentIndex];
-    if (!learnedWords.includes(currentWord.id)) {
-      setLearnedWords([...learnedWords, currentWord.id]);
+    const wordId = currentWord._id || currentWord.id;
+
+    if (!learnedWords.includes(wordId)) {
+      setLearnedWords([...learnedWords, wordId]);
     }
-    handleNext();
+
+    if (userToken) {
+      await markWordAsLearned(wordId, userToken);
+    } else {
+      console.warn("Chưa có token đăng nhập, không thể lưu từ đã học");
+    }
+
+    Alert.alert(
+      "Thông tin từ đã học",
+      `Từ: ${currentWord.word}\nPinyin: ${currentWord.pinyin}\nNghĩa: ${currentWord.meaning}`,
+      [{ text: "OK", onPress: () => handleNext() }]
+    );
   };
 
   const resetStudy = () => {
@@ -81,7 +93,7 @@ const StudyScreen = () => {
       {
         rotateY: flipAnim.interpolate({
           inputRange: [0, 1],
-          outputRange: ['0deg', '180deg'],
+          outputRange: ["0deg", "180deg"],
         }),
       },
     ],
@@ -92,7 +104,7 @@ const StudyScreen = () => {
       {
         rotateY: flipAnim.interpolate({
           inputRange: [0, 1],
-          outputRange: ['180deg', '360deg'],
+          outputRange: ["180deg", "360deg"],
         }),
       },
     ],
@@ -110,6 +122,29 @@ const StudyScreen = () => {
 
   const currentWord = words[currentIndex];
 
+  const markWordAsLearned = async (wordId, token) => {
+    try {
+      console.log("Đang gửi từ đã học:", wordId);
+      const res = await fetch("http://192.168.1.132:5000/api/learned", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ wordId }),
+      });
+
+      const data = await res.json();
+      console.log("Kết quả lưu:", data);
+
+      if (!res.ok) {
+        console.error("Lỗi server:", data);
+      }
+    } catch (error) {
+      console.log("Lỗi khi lưu từ đã học:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -125,20 +160,24 @@ const StudyScreen = () => {
 
       {/* Flashcard */}
       <View style={styles.cardContainer}>
-        <Animated.View style={[styles.card, styles.frontCard, frontAnimatedStyle]}>
+        <Animated.View
+          style={[styles.card, styles.frontCard, frontAnimatedStyle]}
+        >
           <Text style={styles.chineseText}>{currentWord.word}</Text>
           <Text style={styles.pinyinText}>{currentWord.pinyin}</Text>
         </Animated.View>
 
-        <Animated.View style={[styles.card, styles.backCard, backAnimatedStyle]}>
+        <Animated.View
+          style={[styles.card, styles.backCard, backAnimatedStyle]}
+        >
           <Text style={styles.meaningText}>{currentWord.meaning}</Text>
         </Animated.View>
       </View>
 
       {/* Actions */}
       <View style={styles.actions}>
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.flipButton]} 
+        <TouchableOpacity
+          style={[styles.actionButton, styles.flipButton]}
           onPress={handleFlip}
         >
           <Ionicons name="reload" size={24} color="#fff" />
@@ -154,7 +193,7 @@ const StudyScreen = () => {
             <Text style={styles.actionText}>Lưu lại</Text>
           </TouchableOpacity> */}
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.actionButton, styles.learnedButton]}
             onPress={handleMarkLearned}
           >
@@ -162,7 +201,7 @@ const StudyScreen = () => {
             <Text style={styles.actionText}>Đã học</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.actionButton, styles.nextButton]}
             onPress={handleNext}
           >
@@ -178,42 +217,42 @@ const StudyScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f9ff',
+    backgroundColor: "#f5f9ff",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   progress: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   cardContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   card: {
     width: width - 40,
     height: height * 0.4,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    backfaceVisibility: 'hidden',
-    shadowColor: '#000',
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    backfaceVisibility: "hidden",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -223,68 +262,68 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   frontCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   backCard: {
-    backgroundColor: '#4a90e2',
+    backgroundColor: "#4a90e2",
   },
   chineseText: {
     fontSize: 40,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   pinyinText: {
     fontSize: 24,
-    color: '#666',
+    color: "#666",
   },
   meaningText: {
     fontSize: 30,
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
   },
   actions: {
     padding: 20,
   },
   actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 12,
     borderRadius: 10,
     marginVertical: 5,
   },
   flipButton: {
-    backgroundColor: '#4a90e2',
+    backgroundColor: "#4a90e2",
     marginBottom: 20,
   },
   bottomActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   saveButton: {
-    backgroundColor: '#ff9500',
+    backgroundColor: "#ff9500",
     flex: 1,
     marginRight: 5,
   },
   learnedButton: {
-    backgroundColor: '#34c759',
+    backgroundColor: "#34c759",
     flex: 1,
     marginHorizontal: 5,
   },
   nextButton: {
-    backgroundColor: '#5856d6',
+    backgroundColor: "#5856d6",
     flex: 1,
     marginLeft: 5,
   },
   actionText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
     marginLeft: 8,
   },
   errorText: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginTop: 20,
   },
 });
