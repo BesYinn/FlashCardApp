@@ -89,7 +89,7 @@ const CreateCardScreen = () => {
         level: selectedLevel,
       };
 
-      const response = await fetch("http://192.168.2.23:5000/api/flashcards", {
+      const response = await fetch("http://192.168.1.132:5000/api/flashcards", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
