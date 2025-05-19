@@ -475,7 +475,7 @@ module.exports = { app, User };
 // Gọi khi người dùng học xong một từ (ví dụ trong StudyScreen.js)
 const markWordAsLearned = async (wordId, token) => {
   try {
-    await fetch('http://192.168.1.122:5000/api/learned', {
+    await fetch('http://192.168.1.132:5000/api/learned', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
