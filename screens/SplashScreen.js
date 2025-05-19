@@ -37,17 +37,20 @@ const SplashScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Animated.View 
-        style={{ 
+      <Animated.View
+        style={{
           opacity: fadeAnim,
           transform: [{ scale: scaleAnim }],
+          alignItems: 'center',
         }}
       >
-        <Image 
-          source={require('../assets/logo.png')} // Ensure you have a logo.png in the assets folder
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <View style={styles.logoWrapper}>
+          <Image
+            source={require('../assets/logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
         <Text style={styles.title}>Flash Card App</Text>
         <Text style={styles.subtitle}>Học tập hiệu quả mỗi ngày</Text>
       </Animated.View>
@@ -58,27 +61,39 @@ const SplashScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#4a90e2',
+    backgroundColor: '#f0f6ff',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  logoWrapper: {
+    backgroundColor: '#ffffff',
+    borderRadius: 100,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 10,
+    marginBottom: 20,
   },
   logo: {
-    width: 150,
-    height: 150,
-    marginBottom: 20,
-    alignSelf: 'center',
+    width: 120,
+    height: 120,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 30,
+    fontWeight: '600',
+    color: '#2c3e50',
     textAlign: 'center',
     marginBottom: 10,
+    fontFamily: 'sans-serif-medium',
   },
   subtitle: {
-    fontSize: 18,
-    color: '#e8f0fe',
+    fontSize: 16,
+    color: '#5d6d7e',
     textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
 
