@@ -21,21 +21,27 @@ export default function SettingsScreen() {
     );
   };
 
+  const handleNotificationSettings = () => {
+    Alert.alert('Cài đặt thông báo', 'Chức năng này sẽ được cập nhật sau.');
+    // Hoặc điều hướng sang màn hình cài đặt thông báo nếu có:
+    // navigation.navigate('NotificationSettings');
+  };
+  const handleLanguageSettings = () => {
+    Alert.alert('Cài đặt ngôn ngữ', 'Chức năng này sẽ được cập nhật sau.');
+    // Nếu sau này có màn hình cài đặt ngôn ngữ, bỏ comment dòng dưới:
+    // navigation.navigate('LanguageSettings');
+  };
+
   return (
     <View style={styles.container}>
-      {/* Nút quay lại
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="#007bff" />
-        <Text style={styles.backText}>Quay lại</Text>
-      </TouchableOpacity> */}
       <Text style={styles.header}>Cài đặt ứng dụng</Text>
 
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={handleNotificationSettings}>
         <Ionicons name="notifications-outline" size={22} color="#007bff" />
         <Text style={styles.itemText}>Cài đặt thông báo</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={handleLanguageSettings}>
         <Ionicons name="language-outline" size={22} color="#007bff" />
         <Text style={styles.itemText}>Cài đặt ngôn ngữ</Text>
       </TouchableOpacity>
@@ -45,8 +51,6 @@ export default function SettingsScreen() {
         <Text style={styles.itemText}>Đổi mật khẩu</Text>
       </TouchableOpacity>
 
-
-
       <TouchableOpacity
         style={styles.item}
         onPress={() => navigation.navigate('ReminderSettings')}
@@ -54,7 +58,7 @@ export default function SettingsScreen() {
         <Ionicons name="alarm-outline" size={22} color="#007bff" />
         <Text style={styles.itemText}>Cài đặt nhắc nhở học</Text>
       </TouchableOpacity>
-            <TouchableOpacity style={styles.item} onPress={handleDeleteAccount}>
+      <TouchableOpacity style={styles.item} onPress={handleDeleteAccount}>
         <Ionicons name="trash-outline" size={22} color="#ff3b30" />
         <Text style={[styles.itemText, { color: '#ff3b30' }]}>Xóa tài khoản</Text>
       </TouchableOpacity>
