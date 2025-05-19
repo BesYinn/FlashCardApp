@@ -5,7 +5,7 @@ const password = encodeURIComponent("Admin123456");
 const uri = `mongodb+srv://admin:${password}@cluster0.xljpiwa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 const client = new MongoClient(uri);
-const dbName = 'test'; // thay đổi nếu cần
+const dbName = 'test';
 
 async function importData() {
   try {
@@ -15,13 +15,27 @@ async function importData() {
 
     // Đọc file JSON
     const data = JSON.parse(fs.readFileSync('./defaultCards.json', 'utf8'));
-    
-    // Xóa trường `id` để MongoDB tự sinh ObjectId
-    const documents = data.cards.map(({ id, ...rest }) => rest);
 
-    // Insert vào MongoDB
-    const result = await collection.insertMany(documents);
-    console.log(`${result.insertedCount} documents inserted.`);
+    // Lấy danh sách tất cả các từ trong file
+    const allWords = data.cards.map(card => card.word);
+
+    // Tìm các từ đã tồn tại trong DB
+    const existingDocs = await collection.find({ word: { $in: allWords } }).toArray();
+    const existingWords = new Set(existingDocs.map(doc => doc.word));
+
+    // Lọc ra các từ chưa có trong DB
+    const newDocuments = data.cards
+      .filter(card => !existingWords.has(card.word))
+      .map(({ id, ...rest }) => rest); // Bỏ trường id
+
+    // Chèn vào MongoDB nếu có dữ liệu mới
+    if (newDocuments.length > 0) {
+      const result = await collection.insertMany(newDocuments);
+      console.log(`${result.insertedCount} new documents inserted.`);
+    } else {
+      console.log('No new documents to insert.');
+    }
+
   } catch (err) {
     console.error('Error inserting documents:', err);
   } finally {
