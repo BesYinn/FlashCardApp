@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import HomeScreen from '../screens/HomeScreen';
 import LibraryScreen from '../screens/LibraryScreen';
-import LearnScreen from '../screens/LearnScreen';
+// import LearnScreen from '../screens/LearnScreen';
 import GamesScreen from '../screens/GamesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
@@ -46,7 +46,7 @@ const TabNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Learn"
         component={LearnScreen}
         options={{
@@ -55,7 +55,7 @@ const TabNavigator = () => {
             <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Games"
         component={GamesScreen}
