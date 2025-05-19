@@ -71,14 +71,14 @@ const ProfileScreen = () => {
             <Text style={styles.editText}>Chỉnh sửa thông tin</Text>
           </TouchableOpacity>
 
-          {/* Nút đăng xuất ngay dưới thông tin cá nhân */}
+          {/* Nút đăng xuất ngay dưới thông tin cá nhân
           <TouchableOpacity
             style={styles.logoutButton}
             onPress={handleLogout}
           >
             <Ionicons name="log-out-outline" size={24} color="#ff3b30" />
             <Text style={styles.logoutText}>Đăng xuất</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Nút điều hướng đến màn hình Cài đặt

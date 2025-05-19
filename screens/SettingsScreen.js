@@ -6,6 +6,13 @@ import { useNavigation } from '@react-navigation/native';
 export default function SettingsScreen() {
   const navigation = useNavigation();
 
+  const handleLogout = () => {
+    Alert.alert('Đăng xuất', 'Bạn có chắc chắn muốn đăng xuất?', [
+      { text: 'Hủy', style: 'cancel' },
+      { text: 'Đăng xuất', style: 'destructive', onPress: () => navigation.replace('Login') },
+    ]);
+  };
+
   const handleChangePassword = () => {
     Alert.alert('Đổi mật khẩu', 'Chức năng này sẽ được cập nhật sau.');
   };
@@ -61,6 +68,10 @@ export default function SettingsScreen() {
       <TouchableOpacity style={styles.item} onPress={handleDeleteAccount}>
         <Ionicons name="trash-outline" size={22} color="#ff3b30" />
         <Text style={[styles.itemText, { color: '#ff3b30' }]}>Xóa tài khoản</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={handleLogout}>
+        <Ionicons name="log-out-outline" size={22} color="#ff3b30" />
+        <Text style={[styles.itemText, { color: '#ff3b30' }]}>Đăng xuất</Text>
       </TouchableOpacity>
     </View>
   );
