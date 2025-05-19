@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
+// import SettingsScreen from '../screens/SettingsScreen';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -40,6 +41,10 @@ const ProfileScreen = () => {
     );
   };
 
+  const handleAchievements = () => {
+    navigation.navigate('Achievements');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -56,8 +61,25 @@ const ProfileScreen = () => {
         <Text style={styles.userEmail}>{userData?.email || 'N/A'}</Text>
       </View>
 
-      <TouchableOpacity 
-        style={styles.logoutButton} 
+      {/* Nút điều hướng đến màn hình Cài đặt */}
+      <TouchableOpacity
+        style={styles.settingButton}
+        onPress={() => navigation.navigate('Settings')}
+      >
+        <Ionicons name="settings-outline" size={24} color="#007bff" />
+        <Text style={styles.settingText}>Cài đặt ứng dụng</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.achievementButton}
+        onPress={handleAchievements}
+      >
+        <Ionicons name="trophy-outline" size={24} color="#f7b731" />
+        <Text style={styles.achievementText}>Xem thành tích</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.logoutButton}
         onPress={handleLogout}
       >
         <Ionicons name="log-out-outline" size={24} color="#ff3b30" />
@@ -111,6 +133,38 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 16,
     color: '#666',
+  },
+  settingButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    padding: 16,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 12,
+  },
+  settingText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#007bff',
+    fontWeight: '600',
+  },
+  achievementButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    padding: 16,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 12,
+  },
+  achievementText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#f7b731',
+    fontWeight: '600',
   },
   logoutButton: {
     flexDirection: 'row',
