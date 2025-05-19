@@ -8,7 +8,7 @@
       "category": "Chào hỏi"
     },
     {
-      "id": "2", 
+      "id": "2",
       "word": "谢谢",
       "pinyin": "xiè xie",
       "meaning": "Cảm ơn",
@@ -17,11 +17,10 @@
     {
       "id": "3",
       "word": "再见",
-      "pinyin": "zài jiàn", 
+      "pinyin": "zài jiàn",
       "meaning": "Tạm biệt",
       "category": "Chào hỏi"
-    }
-    ,
+    },
     {
       "id": "4",
       "word": "对不起",
@@ -42,8 +41,7 @@
       "pinyin": "qǐng wèn",
       "meaning": "Xin hỏi",
       "category": "Chào hỏi"
-    }
-    ,
+    },
     {
       "id": "7",
       "word": "我爱你",
@@ -71,8 +69,7 @@
       "pinyin": "wǒ hěn hǎo",
       "meaning": "Tôi rất khỏe",
       "category": "Chào hỏi"
-    }
-    ,
+    },
     {
       "id": "11",
       "word": "你叫什么名字",
@@ -86,8 +83,7 @@
       "pinyin": "wǒ jiào ...",
       "meaning": "Tôi tên là...",
       "category": "Chào hỏi"
-    }
-    ,
+    },
     {
       "id": "13",
       "word": "你来自哪里",
@@ -108,8 +104,7 @@
       "pinyin": "nǐ huì shuō zhōng wén ma",
       "meaning": "Bạn có nói tiếng Trung không?",
       "category": "Chào hỏi"
-    }
-    ,
+    },
     {
       "id": "16",
       "word": "我会说一点中文",
@@ -130,8 +125,7 @@
       "pinyin": "wǒ xǐ huān chī mǐ fàn",
       "meaning": "Tôi thích ăn cơm",
       "category": "Thức ăn"
-    }
-    ,
+    },
     {
       "id": "19",
       "word": "你喜欢喝什么",
@@ -145,8 +139,7 @@
       "pinyin": "wǒ xǐ huān hē shuǐ",
       "meaning": "Tôi thích uống nước",
       "category": "Thức uống"
-    }
-    ,
+    },
     {
       "id": "21",
       "word": "你喜欢什么颜色",
@@ -160,8 +153,7 @@
       "pinyin": "wǒ xǐ huān lán sè",
       "meaning": "Tôi thích màu xanh dương",
       "category": "Màu sắc"
-    }
-    ,
+    },
     {
       "id": "23",
       "word": "你喜欢什么动物",
@@ -175,8 +167,7 @@
       "pinyin": "wǒ xǐ huān gǒu",
       "meaning": "Tôi thích chó",
       "category": "Động vật"
-    }
-    ,
+    },
     {
       "id": "25",
       "word": "你喜欢什么季节",
@@ -190,8 +181,7 @@
       "pinyin": "wǒ xǐ huān chūn tiān",
       "meaning": "Tôi thích mùa xuân",
       "category": "Thời tiết"
-    }
-    ,
+    },
     {
       "id": "27",
       "word": "你喜欢什么运动",
@@ -205,8 +195,7 @@
       "pinyin": "wǒ xǐ huān dǎ lán qiú",
       "meaning": "Tôi thích chơi bóng rổ",
       "category": "Thể thao"
-    }
-    ,
+    },
     {
       "id": "29",
       "word": "你喜欢什么音乐",
@@ -220,8 +209,7 @@
       "pinyin": "wǒ xǐ huān liú xíng yīn yuè",
       "meaning": "Tôi thích nhạc pop",
       "category": "Âm nhạc"
-    }
-    ,
+    },
     {
       "id": "31",
       "word": "你喜欢什么电影",
@@ -235,8 +223,7 @@
       "pinyin": "wǒ xǐ huān dòng zuò piàn",
       "meaning": "Tôi thích phim hành động",
       "category": "Phim ảnh"
-    }
-    ,
+    },
     {
       "id": "33",
       "word": "你喜欢什么书",
@@ -250,8 +237,7 @@
       "pinyin": "wǒ xǐ huān xiǎo shuō",
       "meaning": "Tôi thích tiểu thuyết",
       "category": "Sách"
-    }
-    ,
+    },
     {
       "id": "35",
       "word": "你喜欢什么游戏",
@@ -265,8 +251,7 @@
       "pinyin": "wǒ xǐ huān dǎ yóu xì",
       "meaning": "Tôi thích chơi game",
       "category": "Trò chơi"
-    }
-    ,
+    },
     {
       "id": "37",
       "word": "你喜欢什么运动员",
@@ -280,8 +265,7 @@
       "pinyin": "wǒ xǐ huān méi xī",
       "meaning": "Tôi thích Messi",
       "category": "Thể thao"
-    }
-    ,
+    },
     {
       "id": "39",
       "word": "你喜欢什么明星",
@@ -295,8 +279,7 @@
       "pinyin": "wǒ xǐ huān zhōu jié lún",
       "meaning": "Tôi thích Jay Chou",
       "category": "Giải trí"
-    }
-    ,
+    },
     {
       "id": "41",
       "word": "你喜欢什么品牌",
@@ -310,8 +293,7 @@
       "pinyin": "wǒ xǐ huān píng guǒ",
       "meaning": "Tôi thích Apple",
       "category": "Thương hiệu"
-    }
-    ,
+    },
     {
       "id": "43",
       "word": "你喜欢什么食物",
@@ -325,8 +307,7 @@
       "pinyin": "wǒ xǐ huān pī sà",
       "meaning": "Tôi thích pizza",
       "category": "Thức ăn"
-    }
-    ,
+    },
     {
       "id": "45",
       "word": "你喜欢什么饮料",
@@ -340,36 +321,104 @@
       "pinyin": "wǒ xǐ huān kě lè",
       "meaning": "Tôi thích Coca-Cola",
       "category": "Thức uống"
-    }
-    ,
-    {
-      "id": "47",
-      "word": "你喜欢什么运动",
-      "pinyin": "nǐ xǐ huān shén me yùn dòng",
-      "meaning": "Bạn thích môn thể thao nào?",
-      "category": "Thể thao"
     },
     {
-      "id": "48",
-      "word": "我喜欢游泳",
-      "pinyin": "wǒ xǐ huān yóu yǒng",
-      "meaning": "Tôi thích bơi lội",
-      "category": "Thể thao"
-    }
-    ,
-    {
-      "id": "49",
+      "id": "47",
       "word": "你喜欢什么颜色",
       "pinyin": "nǐ xǐ huān shén me yán sè",
       "meaning": "Bạn thích màu sắc nào?",
       "category": "Màu sắc"
     },
     {
-      "id": "50",
+      "id": "48",
       "word": "我喜欢红色",
       "pinyin": "wǒ xǐ huān hóng sè",
       "meaning": "Tôi thích màu đỏ",
       "category": "Màu sắc"
-    }        
+    },
+    {
+      "id": "49",
+      "word": "你喜欢什么花",
+      "pinyin": "nǐ xǐ huān shén me huā",
+      "meaning": "Bạn thích hoa gì?",
+      "category": "Thực vật"
+    },
+    {
+      "id": "50",
+      "word": "我喜欢玫瑰花",
+      "pinyin": "wǒ xǐ huān méi guī huā",
+      "meaning": "Tôi thích hoa hồng",
+      "category": "Thực vật"
+    },
+    {
+      "id": "51",
+      "word": "你喜欢什么 cây",
+      "pinyin": "nǐ xǐ huān shén me shù",
+      "meaning": "Bạn thích cây gì?",
+      "category": "Thực vật"
+    },
+    {
+      "id": "52",
+      "word": "我喜欢松树",
+      "pinyin": "wǒ xǐ huān sōng shù",
+      "meaning": "Tôi thích cây thông",
+      "category": "Thực vật"
+    },
+    {
+      "id": "53",
+      "word": "你喜欢什么 động vật",
+      "pinyin": "nǐ xǐ huān shén me dòng wù",
+      "meaning": "Bạn thích động vật nào?",
+      "category": "Động vật"
+    },
+    {
+      "id": "54",
+      "word": "我喜欢 mèo",
+      "pinyin": "wǒ xǐ huān māo",
+      "meaning": "Tôi thích mèo",
+      "category": "Động vật"
+    },
+    {
+      "id": "55",
+      "word": "你喜欢什么鸟",
+      "pinyin": "nǐ xǐ huān shén me niǎo",
+      "meaning": "Bạn thích chim gì?",
+      "category": "Động vật"
+    },
+    {
+      "id": "56",
+      "word": "我喜欢鹦鹉",
+      "pinyin": "wǒ xǐ huān yīng wǔ",
+      "meaning": "Tôi thích vẹt",
+      "category": "Động vật"
+    },
+    {
+      "id": "57",
+      "word": "你喜欢什么鱼",
+      "pinyin": "nǐ xǐ huān shén me yú",
+      "meaning": "Bạn thích cá gì?",
+      "category": "Động vật"
+    },
+    {
+      "id": "58",
+      "word": "我喜欢金鱼",
+      "pinyin": "wǒ xǐ huān jīn yú",
+      "meaning": "Tôi thích cá vàng",
+      "category": "Động vật"
+    },
+    {
+      "id": "59",
+      "word": "你喜欢什么昆虫",
+      "pinyin": "nǐ xǐ huān shén me kūn chóng",
+      "meaning": "Bạn thích côn trùng nào?",
+      "category": "Động vật"
+    },
+    {
+      "id": "60",
+      "word": "我喜欢蝴蝶",
+      "pinyin": "wǒ xǐ huān hú dié",
+      "meaning": "Tôi thích bướm",
+      "category": "Động vật"
+    }
   ]
 }
