@@ -6,26 +6,23 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Image,
+  ScrollView, // Thêm import này
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
-// import SettingsScreen from '../screens/SettingsScreen';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { logout, userData } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
       'Xác nhận đăng xuất',
       'Bạn có chắc chắn muốn đăng xuất khỏi ứng dụng?',
       [
-        {
-          text: 'Hủy',
-          style: 'cancel',
-        },
+        { text: 'Hủy', style: 'cancel' },
         {
           text: 'Đăng xuất',
           style: 'destructive',
@@ -45,46 +42,63 @@ const ProfileScreen = () => {
     navigation.navigate('Achievements');
   };
 
+  const handleEditProfile = () => {
+    Alert.alert('Chỉnh sửa thông tin', 'Chức năng này sẽ được cập nhật sau.');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Tài khoản</Text>
-      </View>
-
-      <View style={styles.profileSection}>
-        <View style={styles.avatarContainer}>
-          <View style={[styles.avatar, styles.placeholderAvatar]}>
-            <Ionicons name="person" size={40} color="#666" />
-          </View>
+      <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Tài khoản</Text>
         </View>
-        <Text style={styles.userName}>{userData?.fullName || 'N/A'}</Text>
-        <Text style={styles.userEmail}>{userData?.email || 'N/A'}</Text>
-      </View>
 
-      {/* Nút điều hướng đến màn hình Cài đặt */}
-      <TouchableOpacity
-        style={styles.settingButton}
-        onPress={() => navigation.navigate('Settings')}
-      >
-        <Ionicons name="settings-outline" size={24} color="#007bff" />
-        <Text style={styles.settingText}>Cài đặt ứng dụng</Text>
-      </TouchableOpacity>
+        <View style={styles.profileSection}>
+          <View style={styles.avatarContainer}>
+            {userData?.avatar ? (
+              <Image source={{ uri: userData.avatar }} style={styles.avatar} />
+            ) : (
+              <View style={[styles.avatar, styles.placeholderAvatar]}>
+                <Ionicons name="person" size={40} color="#666" />
+              </View>
+            )}
+          </View>
+          <Text style={styles.userName}>{userData?.fullName || 'N/A'}</Text>
+          <Text style={styles.userEmail}>{userData?.email || 'N/A'}</Text>
+          {/* Nút chỉnh sửa thông tin */}
+          <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
+            <Ionicons name="create-outline" size={20} color="#007bff" />
+            <Text style={styles.editText}>Chỉnh sửa thông tin</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.achievementButton}
-        onPress={handleAchievements}
-      >
-        <Ionicons name="trophy-outline" size={24} color="#f7b731" />
-        <Text style={styles.achievementText}>Xem thành tích</Text>
-      </TouchableOpacity>
+          {/* Nút đăng xuất ngay dưới thông tin cá nhân */}
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogout}
+          >
+            <Ionicons name="log-out-outline" size={24} color="#ff3b30" />
+            <Text style={styles.logoutText}>Đăng xuất</Text>
+          </TouchableOpacity>
+        </View>
 
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={handleLogout}
-      >
-        <Ionicons name="log-out-outline" size={24} color="#ff3b30" />
-        <Text style={styles.logoutText}>Đăng xuất</Text>
-      </TouchableOpacity>
+        {/* Nút điều hướng đến màn hình Cài đặt */}
+        <TouchableOpacity
+          style={styles.settingButton}
+          onPress={() => navigation.navigate('Settings')}
+        >
+          <Ionicons name="settings-outline" size={24} color="#007bff" />
+          <Text style={styles.settingText}>Cài đặt ứng dụng</Text>
+        </TouchableOpacity>
+
+        {/* Nút điều hướng đến màn hình Thành tích */}
+        <TouchableOpacity
+          style={styles.achievementButton}
+          onPress={handleAchievements}
+        >
+          <Ionicons name="trophy-outline" size={24} color="#f7b731" />
+          <Text style={styles.achievementText}>Xem thành tích</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -133,6 +147,22 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 16,
     color: '#666',
+    marginBottom: 8,
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    backgroundColor: '#eaf1ff',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  editText: {
+    marginLeft: 6,
+    color: '#007bff',
+    fontWeight: '600',
+    fontSize: 15,
   },
   settingButton: {
     flexDirection: 'row',

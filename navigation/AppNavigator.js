@@ -12,6 +12,7 @@ import MatchingGame from '../screens/games/MatchingGame';
 import LogoutScreen from '../screens/LogoutScreen';
 import AchievementsScreen from '../screens/AchievementsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import ReminderSettingsScreen from '../screens/ReminderSettingsScreen';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +36,7 @@ const AppNavigator = () => {
       <Stack.Screen name="Logout" component={LogoutScreen} />
       <Stack.Screen name="Achievements" component={AchievementsScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="ReminderSettings" component={ReminderSettingsScreen} />
     </Stack.Navigator>
   );
 };

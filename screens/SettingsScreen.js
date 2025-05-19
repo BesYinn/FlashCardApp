@@ -23,7 +23,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-              {/* Nút quay lại */}
+      {/* Nút quay lại */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="#007bff" />
         <Text style={styles.backText}>Quay lại</Text>
@@ -48,6 +48,14 @@ export default function SettingsScreen() {
       <TouchableOpacity style={styles.item} onPress={handleDeleteAccount}>
         <Ionicons name="trash-outline" size={22} color="#ff3b30" />
         <Text style={[styles.itemText, { color: '#ff3b30' }]}>Xóa tài khoản</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => navigation.navigate('ReminderSettings')}
+      >
+        <Ionicons name="alarm-outline" size={22} color="#007bff" />
+        <Text style={styles.itemText}>Cài đặt nhắc nhở học</Text>
       </TouchableOpacity>
     </View>
   );
