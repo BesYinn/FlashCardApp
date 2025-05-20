@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_URL } from '@env';
 
 const axiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: "http://192.168.172.118:5000",
   timeout: 5000,
 });
 
